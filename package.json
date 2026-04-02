@@ -1,0 +1,15 @@
+{
+  "name": "binary-tree-visualizer",
+  "private": true,
+  "description": "Binary tree traversal demo — static site with Playwright E2E tests",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "serve": "^14.2.4"
+  }
+}

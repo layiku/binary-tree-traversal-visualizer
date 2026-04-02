@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="appTitle">Binary Tree Traversal Visualizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-container">
+    <aside class="sidebar">
+      <header class="header">
+        <h1 data-i18n="brandTitle">Binary Tree</h1>
+        <p data-i18n="brandSubtitle">Traversal Visualizer</p>
+      </header>
+
+      <div class="control-group">
+        <label for="node-count" data-i18n="nodeCountLabel">Node count (1–31)</label>
+        <div class="input-wrapper">
+          <input type="number" id="node-count" min="1" max="31" value="7" />
+        </div>
+        <button type="button" class="primary" id="btn-generate" data-i18n="btnGenerate">Generate tree</button>
+      </div>
+
+      <div class="control-group">
+        <span class="section-label" data-i18n="traversalLabel">Traversal</span>
+        <div class="radio-list" id="traversal-modes">
+          <label class="radio-item"><input type="radio" name="traversal" value="preorder" checked /> <span data-i18n="trPreorder">Preorder</span></label>
+          <label class="radio-item"><input type="radio" name="traversal" value="inorder" /> <span data-i18n="trInorder">Inorder</span></label>
+          <label class="radio-item"><input type="radio" name="traversal" value="postorder" /> <span data-i18n="trPostorder">Postorder</span></label>
+          <label class="radio-item"><input type="radio" name="traversal" value="levelIter" /> <span data-i18n="trLevelIter">Level-order (queue)</span></label>
+          <label class="radio-item"><input type="radio" name="traversal" value="levelRecur" /> <span data-i18n="trLevelRecur">Level-order (recursive)</span></label>
+        </div>
+        <button type="button" class="secondary" id="btn-start" data-i18n="btnStart" disabled>Start demo</button>
+      </div>
+
+      <div class="properties-container" id="status-panel">
+        <div class="properties-header" data-i18n="statusHeader">Status</div>
+        <div class="property-item full-width" id="status-traversal">
+          <span class="status-icon">◇</span>
+          <span><span data-i18n="statusTraversal">Traversal</span>: <span id="status-traversal-val">—</span></span>
+        </div>
+        <div class="property-item full-width" id="status-step">
+          <span class="status-icon">◎</span>
+          <span><span data-i18n="statusStep">Step</span>: <span id="status-step-val">0 / 0</span></span>
+        </div>
+        <div class="property-item full-width hint" id="status-hint" data-i18n="statusHintIdle">
+          Generate a tree, choose traversal, then Start.
+        </div>
+      </div>
+
+      <div class="control-group speed-group">
+        <div class="label-row">
+          <label for="speed" data-i18n="speedLabel">Animation speed</label>
+          <span id="speed-value">1.0x</span>
+        </div>
+        <input type="range" id="speed" min="1" max="20" value="10" />
+      </div>
+
+      <div class="log-container">
+        <div class="log-header" data-i18n="logHeader">Logs</div>
+        <div class="log-content" id="log-content">
+          <div class="empty-log" data-i18n="logWelcome">Welcome. Generate a random binary tree to begin.</div>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <button type="button" id="lang-btn" data-i18n="langSwitch">Switch to 中文</button>
+        <p>&copy; 2026 BinaryTreeVisualizer</p>
+      </footer>
+    </aside>
+
+    <main class="main-content">
+      <div class="canvas-wrapper">
+        <canvas id="tree-canvas"></canvas>
+      </div>
+      <div class="animation-controls">
+        <button type="button" class="icon-btn secondary" id="btn-prev" title="Previous" aria-label="Previous" disabled>←</button>
+        <button type="button" class="icon-btn primary" id="btn-play" title="Play" aria-label="Play" disabled>▶</button>
+        <button type="button" class="icon-btn secondary" id="btn-next" title="Next" aria-label="Next" disabled>→</button>
+        <span class="step-counter" id="step-counter">0 / 0</span>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/binarytree.js"></script>
+  <script src="js/visualizer.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
