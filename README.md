@@ -50,7 +50,7 @@ To strip `Co-authored-by:` lines that mention Cursor from commit messages (so tr
 git config core.hooksPath .githooks
 ```
 
-The hook lives in [`.githooks/commit-msg`](.githooks/commit-msg).
+The hook lives in [`.githooks/commit-msg`](.githooks/commit-msg). It removes `Co-authored-by:` lines mentioning Cursor and any `Made-with:` trailer. If your shell wraps `git` and still injects trailers after the hook runs, use the real binary (for example `C:\Program Files\Git\bin\git.exe` on Windows) for `commit` / `commit-tree`.
 
 ## Project layout
 
