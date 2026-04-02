@@ -160,7 +160,8 @@
    * @returns {TraversalStep[]}
    */
   function getTraversalSteps(root, mode) {
-    switch (mode) {
+    const m = String(mode == null ? '' : mode).trim();
+    switch (m) {
       case 'preorder':
         return traversePreorder(root);
       case 'inorder':

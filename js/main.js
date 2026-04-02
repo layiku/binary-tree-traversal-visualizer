@@ -1,5 +1,5 @@
 /**
- * UI: generate tree, pick traversal, play steps, logs, i18n.
+ * UI: generate tree, pick traversal, play steps, i18n.
  */
 (function () {
   'use strict';
@@ -24,7 +24,6 @@
   const stepCounter = document.getElementById('step-counter');
   const speedInput = document.getElementById('speed');
   const speedValue = document.getElementById('speed-value');
-  const logContent = document.getElementById('log-content');
   const langBtn = document.getElementById('lang-btn');
   const statusTraversalVal = document.getElementById('status-traversal-val');
   const statusStepVal = document.getElementById('status-step-val');
@@ -39,8 +38,9 @@
   };
 
   function getSelectedMode() {
-    const el = document.querySelector('input[name="traversal"]:checked');
-    return el ? el.value : 'preorder';
+    const el = document.querySelector('#traversal-modes input[name="traversal"]:checked');
+    const v = el && typeof el.value === 'string' ? el.value.trim() : '';
+    return v || 'preorder';
   }
 
   function traversalDisplayName(mode) {
@@ -100,36 +100,6 @@
     redraw();
   }
 
-  function clearLog() {
-    logContent.innerHTML = '';
-    const empty = document.createElement('div');
-    empty.className = 'empty-log';
-    empty.setAttribute('data-i18n', 'logWelcome');
-    empty.textContent = I18n.t('logWelcome');
-    logContent.appendChild(empty);
-  }
-
-  function showLogForCurrentRun() {
-    logContent.innerHTML = '';
-    if (steps.length === 0) {
-      const empty = document.createElement('div');
-      empty.className = 'empty-log';
-      empty.textContent = I18n.t('logEmpty');
-      logContent.appendChild(empty);
-      return;
-    }
-    const frag = document.createDocumentFragment();
-    for (let i = 0; i < steps.length; i++) {
-      const s = steps[i];
-      const line = I18n.t('logLineVisit', { value: s.value, id: s.nodeId });
-      const div = document.createElement('div');
-      div.className = 'log-item';
-      div.textContent = line;
-      frag.appendChild(div);
-    }
-    logContent.appendChild(frag);
-  }
-
   function goToStep(i) {
     if (!steps.length) {
       stepIndex = -1;
@@ -138,11 +108,6 @@
     }
     stepIndex = Math.max(0, Math.min(i, steps.length - 1));
     updateStepUi();
-    const nodes = logContent.querySelectorAll('.log-item');
-    nodes.forEach(function (n) {
-      n.classList.remove('highlight');
-    });
-    if (nodes[stepIndex]) nodes[stepIndex].classList.add('highlight');
   }
 
   function onGenerate() {
@@ -155,7 +120,6 @@
     root = BT.buildRandomTree(n);
     steps = [];
     stepIndex = -1;
-    clearLog();
     btnStart.disabled = false;
     setStatusHint('statusHintReady');
     statusTraversalVal.textContent = '—';
@@ -169,7 +133,6 @@
     const mode = getSelectedMode();
     steps = BT.getTraversalSteps(root, mode);
     stepIndex = -1;
-    showLogForCurrentRun();
     setStatusHint('statusHintReady');
     if (steps.length) {
       goToStep(0);
@@ -240,7 +203,6 @@
       stopPlayback();
       steps = [];
       stepIndex = -1;
-      clearLog();
       if (root) {
         setStatusHint('statusHintReady');
       } else {
@@ -257,11 +219,6 @@
     if (statusHint.getAttribute('data-i18n')) {
       setStatusHint(statusHint.getAttribute('data-i18n'));
     }
-    if (root && steps.length) {
-      const si = stepIndex;
-      showLogForCurrentRun();
-      if (si >= 0) goToStep(si);
-    } else if (!root) clearLog();
     if (statusTraversalVal && steps.length) {
       statusTraversalVal.textContent = traversalDisplayName(getSelectedMode());
     }

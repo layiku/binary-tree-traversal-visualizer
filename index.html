@@ -12,6 +12,7 @@
 <body>
   <div class="app-container">
     <aside class="sidebar">
+      <div class="sidebar-panel">
       <header class="header">
         <h1 data-i18n="brandTitle">Binary Tree</h1>
         <p data-i18n="brandSubtitle">Traversal Visualizer</p>
@@ -27,12 +28,27 @@
 
       <div class="control-group">
         <span class="section-label" data-i18n="traversalLabel">Traversal</span>
-        <div class="radio-list" id="traversal-modes">
-          <label class="radio-item"><input type="radio" name="traversal" value="preorder" checked /> <span data-i18n="trPreorder">Preorder</span></label>
-          <label class="radio-item"><input type="radio" name="traversal" value="inorder" /> <span data-i18n="trInorder">Inorder</span></label>
-          <label class="radio-item"><input type="radio" name="traversal" value="postorder" /> <span data-i18n="trPostorder">Postorder</span></label>
-          <label class="radio-item"><input type="radio" name="traversal" value="levelIter" /> <span data-i18n="trLevelIter">Level-order (queue)</span></label>
-          <label class="radio-item"><input type="radio" name="traversal" value="levelRecur" /> <span data-i18n="trLevelRecur">Level-order (recursive)</span></label>
+        <div class="radio-list" id="traversal-modes" role="radiogroup" aria-label="Traversal">
+          <div class="radio-row">
+            <input type="radio" name="traversal" id="tr-preorder" value="preorder" checked />
+            <label class="radio-item" for="tr-preorder"><span data-i18n="trPreorder">Preorder</span></label>
+          </div>
+          <div class="radio-row">
+            <input type="radio" name="traversal" id="tr-inorder" value="inorder" />
+            <label class="radio-item" for="tr-inorder"><span data-i18n="trInorder">Inorder</span></label>
+          </div>
+          <div class="radio-row">
+            <input type="radio" name="traversal" id="tr-postorder" value="postorder" />
+            <label class="radio-item" for="tr-postorder"><span data-i18n="trPostorder">Postorder</span></label>
+          </div>
+          <div class="radio-row">
+            <input type="radio" name="traversal" id="tr-level-iter" value="levelIter" />
+            <label class="radio-item" for="tr-level-iter"><span data-i18n="trLevelIter">Level-order (queue)</span></label>
+          </div>
+          <div class="radio-row">
+            <input type="radio" name="traversal" id="tr-level-recur" value="levelRecur" />
+            <label class="radio-item" for="tr-level-recur"><span data-i18n="trLevelRecur">Level-order (recursive)</span></label>
+          </div>
         </div>
         <button type="button" class="secondary" id="btn-start" data-i18n="btnStart" disabled>Start demo</button>
       </div>
@@ -59,21 +75,15 @@
         </div>
         <input type="range" id="speed" min="1" max="20" value="10" />
       </div>
-
-      <div class="log-container">
-        <div class="log-header" data-i18n="logHeader">Logs</div>
-        <div class="log-content" id="log-content">
-          <div class="empty-log" data-i18n="logWelcome">Welcome. Generate a random binary tree to begin.</div>
-        </div>
       </div>
 
       <footer class="footer">
-        <button type="button" id="lang-btn" data-i18n="langSwitch">Switch to 中文</button>
         <p>&copy; 2026 BinaryTreeVisualizer</p>
       </footer>
     </aside>
 
     <main class="main-content">
+      <button type="button" class="lang-btn-overlay" id="lang-btn" data-i18n="langSwitch">Switch to 中文</button>
       <div class="canvas-wrapper">
         <canvas id="tree-canvas"></canvas>
       </div>

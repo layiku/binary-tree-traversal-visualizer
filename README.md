@@ -1,6 +1,6 @@
 # Binary Tree Traversal Visualizer
 
-A lightweight, static web app that builds a **random binary tree** from a chosen node count and **animates five traversal modes** step by step. The layout and controls (sidebar, canvas, floating playback bar, logs, English/Chinese toggle) follow the same interaction pattern as [AVLTreeVisualizer](https://github.com/layiku/AVLTreeVisualizer).
+A lightweight, static web app that builds a **random binary tree** from a chosen node count and **animates five traversal modes** step by step. The layout and controls (sidebar, canvas, floating playback bar, English/Chinese toggle) follow the same interaction pattern as [AVLTreeVisualizer](https://github.com/layiku/AVLTreeVisualizer).
 
 ## Features
 

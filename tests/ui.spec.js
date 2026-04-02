@@ -23,7 +23,6 @@ test.describe('BinaryTreeVisualizer UI', () => {
     await page.locator('#btn-generate').click();
     await page.locator('#btn-start').click();
     await expect(page.locator('#step-counter')).toContainText('1 / 5');
-    await expect(page.locator('#log-content .log-item')).toHaveCount(5);
     await expect(page.locator('#btn-play')).toBeEnabled();
     await expect(page.locator('#btn-next')).toBeEnabled();
     await expect(page.locator('#btn-prev')).toBeDisabled();
@@ -41,7 +40,7 @@ test.describe('BinaryTreeVisualizer UI', () => {
     await expect(page.locator('#step-counter')).toContainText('1 / 4');
   });
 
-  test('each traversal mode produces N log lines for N nodes', async ({ page }) => {
+  test('each traversal mode shows N steps for N nodes', async ({ page }) => {
     const modes = ['preorder', 'inorder', 'postorder', 'levelIter', 'levelRecur'];
     for (const mode of modes) {
       await page.goto('/');
@@ -49,7 +48,7 @@ test.describe('BinaryTreeVisualizer UI', () => {
       await page.locator('#btn-generate').click();
       await page.locator(`input[name="traversal"][value="${mode}"]`).check();
       await page.locator('#btn-start').click();
-      await expect(page.locator('#log-content .log-item')).toHaveCount(6);
+      await expect(page.locator('#step-counter')).toContainText('1 / 6');
     }
   });
 
@@ -97,11 +96,12 @@ test.describe('BinaryTreeVisualizer UI', () => {
     await page.locator('#btn-generate').click();
     await page.locator('#btn-start').click();
     await page.locator('#btn-play').click();
-    await expect(page.locator('#step-counter')).toContainText('2 / 5', { timeout: 5000 });
+    await expect(page.locator('#step-counter')).not.toHaveText('1 / 5', { timeout: 5000 });
+    const pausedAt = (await page.locator('#step-counter').innerText()).trim();
     await page.locator('#btn-play').click();
-    await expect(page.locator('#step-counter')).toContainText('2 / 5');
+    await expect(page.locator('#step-counter')).toHaveText(pausedAt);
     await new Promise((r) => setTimeout(r, 2000));
-    await expect(page.locator('#step-counter')).toContainText('2 / 5');
+    await expect(page.locator('#step-counter')).toHaveText(pausedAt);
     await expect(page.locator('#step-counter')).not.toContainText('5 / 5');
   });
 
