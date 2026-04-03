@@ -5,3 +5,6 @@ blob-report/
 playwright/.cache/
 *.log
 .DS_Store
+
+# Local-only Git hooks (optional; not shipped with the repo)
+.githooks/
