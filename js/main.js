@@ -13,6 +13,8 @@
   let stepIndex = -1;
   let playing = false;
   let playTimer = null;
+  /** @type {{ node: object, frozenView: { scale: number, offsetX: number, offsetY: number, drawR: number } } | null} */
+  let drag = null;
 
   const canvas = document.getElementById('tree-canvas');
   const nodeCountInput = document.getElementById('node-count');
@@ -71,7 +73,32 @@
   function redraw() {
     const hi =
       stepIndex >= 0 && stepIndex < steps.length ? steps[stepIndex].nodeId : null;
-    V.drawTree(canvas, root, hi);
+    /** @type {{ frozenView?: object, dragNodeId?: number }} */
+    const opts = {};
+    if (drag) {
+      opts.frozenView = drag.frozenView;
+      opts.dragNodeId = drag.node.id;
+    }
+    V.drawTree(canvas, root, hi, opts);
+  }
+
+  function canvasCssCoords(ev) {
+    const r = canvas.getBoundingClientRect();
+    return { x: ev.clientX - r.left, y: ev.clientY - r.top };
+  }
+
+  function endDrag(ev) {
+    if (!drag) return;
+    drag = null;
+    canvas.style.cursor = 'default';
+    if (ev && typeof ev.pointerId === 'number' && canvas.hasPointerCapture(ev.pointerId)) {
+      try {
+        canvas.releasePointerCapture(ev.pointerId);
+      } catch (e) {
+        /* ignore */
+      }
+    }
+    redraw();
   }
 
   function setStatusHint(key) {
@@ -112,12 +139,15 @@
 
   function onGenerate() {
     stopPlayback();
+    drag = null;
+    canvas.style.cursor = 'default';
     let n = parseInt(nodeCountInput.value, 10);
     if (Number.isNaN(n)) n = 7;
     n = Math.max(1, Math.min(31, n));
     nodeCountInput.value = String(n);
 
     root = BT.buildRandomTree(n);
+    if (root) V.clearDragState(root);
     steps = [];
     stepIndex = -1;
     btnStart.disabled = false;
@@ -198,6 +228,59 @@
   speedInput.addEventListener('input', onSpeedChange);
   window.addEventListener('resize', onResize);
 
+  canvas.addEventListener('pointerdown', function (ev) {
+    if (!root || ev.button !== 0) return;
+    const { x, y } = canvasCssCoords(ev);
+    const node = V.pickNodeAt(canvas, root, x, y);
+    if (!node) return;
+    ev.preventDefault();
+    drag = { node: node, frozenView: V.getViewForDragFreeze(canvas, root) };
+    try {
+      canvas.setPointerCapture(ev.pointerId);
+    } catch (e) {
+      /* ignore */
+    }
+    canvas.style.cursor = 'grabbing';
+  });
+
+  canvas.addEventListener('pointermove', function (ev) {
+    if (!root) return;
+    if (drag) {
+      ev.preventDefault();
+      const { x, y } = canvasCssCoords(ev);
+      const fv = drag.frozenView;
+      const ax = (x - fv.offsetX) / fv.scale;
+      const ay = (y - fv.offsetY) / fv.scale;
+      V.layoutEffectivePositions(root);
+      if (drag.node === root) {
+        drag.node._rootDragDx = ax - drag.node._baseLx;
+        drag.node._rootDragDy = ay - drag.node._baseLy;
+      } else {
+        const p = V.findParent(root, drag.node);
+        if (p) {
+          drag.node._dragParentDx = ax - p._lx;
+          /** Abstract y grows downward; forbid child center above parent center. */
+          drag.node._dragParentDy = Math.max(0, ay - p._ly);
+        }
+      }
+      redraw();
+      return;
+    }
+    const { x, y } = canvasCssCoords(ev);
+    const node = V.pickNodeAt(canvas, root, x, y);
+    canvas.style.cursor = node ? 'grab' : 'default';
+  });
+
+  canvas.addEventListener('pointerup', endDrag);
+  canvas.addEventListener('pointercancel', endDrag);
+  canvas.addEventListener('lostpointercapture', function () {
+    if (drag) {
+      drag = null;
+      canvas.style.cursor = 'default';
+      redraw();
+    }
+  });
+
   document.querySelectorAll('input[name="traversal"]').forEach(function (r) {
     r.addEventListener('change', function () {
       stopPlayback();
@@ -222,6 +305,7 @@
     if (statusTraversalVal && steps.length) {
       statusTraversalVal.textContent = traversalDisplayName(getSelectedMode());
     }
+    redraw();
   });
 
   I18n.apply();

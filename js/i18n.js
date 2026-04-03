@@ -27,6 +27,7 @@
       speedLabel: 'Animation speed',
       langSwitch: 'Switch to 中文',
       langCode: 'en',
+      canvasEmptyHint: 'No tree yet\nClick «Generate tree» in the sidebar',
     },
     zh: {
       appTitle: '二叉树遍历演示',
@@ -50,6 +51,7 @@
       speedLabel: '动画速度',
       langSwitch: 'Switch to English',
       langCode: 'zh',
+      canvasEmptyHint: '尚未生成树\n请在左侧点击「生成树」',
     },
   };
 

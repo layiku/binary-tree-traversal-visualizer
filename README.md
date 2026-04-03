@@ -15,6 +15,58 @@ A lightweight, static web app that builds a **random binary tree** from a chosen
 - **Visualization**: Canvas drawing with the current visit highlighted.  
 - **i18n**: Switch between English and Chinese without reloading.
 
+## Algorithm overview (with examples)
+
+Below, each idea is stated briefly and illustrated on the **same** small tree so you can compare orders side by side.
+
+**Example tree** (values are labels; edges are left / right children):
+
+```text
+        1
+       / \
+      2   3
+     / \
+    4   5
+```
+
+- **Node 1** — root; **2** — left child of 1; **3** — right child of 1; **4** — left child of 2; **5** — right child of 2.
+
+### Binary tree (二叉树)
+
+A **binary tree** is a rooted tree where each node has **at most two** children, usually called **left** and **right**. The empty tree has no nodes. This app builds a **random** binary tree with exactly \(N\) nodes by randomly splitting subtree sizes; shape and which side is empty (if any) vary each time.
+
+*Example:* The diagram above is a binary tree with 5 nodes; node 2 has children 4 and 5, node 1 has children 2 and 3.
+
+### Preorder traversal (前序遍历) — root → left → right
+
+Visit the **current node first**, then the left subtree in preorder, then the right subtree in preorder. Useful for copying a tree or prefix-style encodings.
+
+*Visit order on the example tree:* **1, 2, 4, 5, 3**
+
+### Inorder traversal (中序遍历) — left → root → right
+
+Visit the **left subtree** in inorder, then the **current node**, then the **right subtree** in inorder. On a **binary search tree**, this yields values in sorted order (this demo’s trees are not necessarily BSTs).
+
+*Visit order on the example tree:* **4, 2, 5, 1, 3**
+
+### Postorder traversal (后序遍历) — left → right → root
+
+Visit the **left** subtree in postorder, then the **right** subtree in postorder, then the **current node**. Useful for deleting or evaluating expression trees bottom-up.
+
+*Visit order on the example tree:* **4, 5, 2, 3, 1**
+
+### Level-order traversal, non-recursive (层序遍历 · 非递归 / queue BFS)
+
+Visit nodes **level by level**, from top to bottom and left to right within a level. A standard implementation uses a **queue**: dequeue the front node, visit it, enqueue its left child (if any), then its right child (if any), and repeat until the queue is empty.
+
+*Visit order on the example tree:* **1, 2, 3, 4, 5**
+
+### Level-order traversal, recursive (层序遍历 · 递归)
+
+The **same visit order** as BFS above, but implemented recursively—e.g. by passing the current **depth** and, for each depth, scanning nodes that exist at that level (often with a helper that walks from the root and visits nodes at distance \(d\)). The app’s “Level-order (recursive)” mode produces the **same step sequence** as the queue version; only the implementation style differs.
+
+*Visit order on the example tree (same as non-recursive):* **1, 2, 3, 4, 5**
+
 ## How to run
 
 1. Clone or copy this folder.  

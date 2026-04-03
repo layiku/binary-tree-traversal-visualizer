@@ -330,6 +330,7 @@ canvas {
   height: 100%;
   cursor: grab;
   display: block;
+  touch-action: none;
 }
 
 canvas:active {
