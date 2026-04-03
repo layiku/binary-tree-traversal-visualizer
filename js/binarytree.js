@@ -31,28 +31,67 @@
     return arr;
   }
 
+  /** Same geometry as visualizer fixed-angle layout (see visualizer.js). Used to avoid shapes that collide in abstract (x,y) when n is small. */
+  const _LAY_HALF = (32 * Math.PI) / 180;
+  const _LAY_DX = 1 * Math.sin(_LAY_HALF);
+  const _LAY_DY = 1 * Math.cos(_LAY_HALF);
+
+  function collectLayoutKeys(node, x, y, out) {
+    if (!node) return;
+    out.push(x.toFixed(9) + ',' + y.toFixed(9));
+    collectLayoutKeys(node.left, x - _LAY_DX, y + _LAY_DY, out);
+    collectLayoutKeys(node.right, x + _LAY_DX, y + _LAY_DY, out);
+  }
+
+  /** True if two different nodes share the same abstract layout position (LR vs RL etc.). */
+  function hasLayoutPositionCollision(root) {
+    const keys = [];
+    collectLayoutKeys(root, 0, 0, keys);
+    return new Set(keys).size !== keys.length;
+  }
+
+  function uniqueRefCount(root) {
+    const s = new Set();
+    function walk(node) {
+      if (!node) return;
+      s.add(node);
+      walk(node.left);
+      walk(node.right);
+    }
+    walk(root);
+    return s.size;
+  }
+
   /**
    * Random binary tree with exactly n nodes (uniform split of sizes).
    * Values are shuffled 1..n assigned in preorder as nodes are created.
+   * For n ≤ 12, may retry random splits to reduce fixed-angle layout collisions (visualizer also separates overlaps).
    * @param {number} n
    * @returns {TreeNode | null}
    */
   function buildRandomTree(n) {
-    resetIdCounter();
     if (n <= 0) return null;
-    const values = shuffle(Array.from({ length: n }, (_, i) => i + 1));
-    let vi = 0;
+    const maxTries = n <= 12 ? 120 : 1;
+    let tree = null;
+    for (let t = 0; t < maxTries; t++) {
+      resetIdCounter();
+      const values = shuffle(Array.from({ length: n }, (_, i) => i + 1));
+      let vi = 0;
 
-    function build(k) {
-      if (k === 0) return null;
-      const leftSize = Math.floor(Math.random() * k);
-      const node = new TreeNode(values[vi++]);
-      node.left = build(leftSize);
-      node.right = build(k - 1 - leftSize);
-      return node;
+      function build(k) {
+        if (k === 0) return null;
+        const leftSize = Math.floor(Math.random() * k);
+        const node = new TreeNode(values[vi++]);
+        node.left = build(leftSize);
+        node.right = build(k - 1 - leftSize);
+        return node;
+      }
+
+      tree = build(n);
+      if (uniqueRefCount(tree) !== n) continue;
+      if (n > 12 || !hasLayoutPositionCollision(tree)) break;
     }
-
-    return build(n);
+    return tree;
   }
 
   /** @typedef {{ nodeId: number, value: number }} TraversalStep */
